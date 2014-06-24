@@ -8,7 +8,7 @@
       #map-canvas { height: 400px; width: 600px; }
     </style>
     <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing&key=AIzaSyBAqIc4r4t_USpDLSRNv-j1F9YlRmJoKQk">
+      src="https://maps.googleapis.com/maps/api/js?libraries=drawing,geometry">
     </script>
     <script type="text/javascript">
       function initialize() {
@@ -19,7 +19,7 @@
         var map = new google.maps.Map(document.getElementById("map-canvas"),
             mapOptions);
         var drawingManager = new google.maps.drawing.DrawingManager({
-          drawingMode: google.maps.drawing.OverlayType.MARKER,
+          drawingMode: null,
           drawingControl: true,
           drawingControlOptions: {
             position: google.maps.ControlPosition.TOP_CENTER,
@@ -27,9 +27,9 @@
               google.maps.drawing.OverlayType.POLYLINE
             ]
           },
-          markerOptions: {
-            icon: 'images/beachflag.png'
-          },
+          // markerOptions: {
+          //   icon: 'images/beachflag.png'
+          // },
           circleOptions: {
             fillColor: '#ffff00',
             fillOpacity: 1,
@@ -39,13 +39,32 @@
             zIndex: 1
           }
         });
+        var paths = [];
+        var infowindow = new google.maps.InfoWindow();
         drawingManager.setMap(map);
+        google.maps.event.addListener(drawingManager, 'overlaycomplete', 
+          function(event) {
+            if(event.type == google.maps.drawing.OverlayType.POLYLINE) {
+              var newPath = event.overlay;
+              var l = google.maps.geometry.spherical.computeLength(event.overlay.getPath());
+              newPath.content = "path #" + paths.length + " length:" + l + "m";
+              google.maps.event.addListener(newPath, 'click', function(e) {
+                infowindow.setContent(this.content);
+                var anchor = new google.maps.MVCObject();
+                anchor.set('position',e.latLng);
+                infowindow.open(map, anchor);
+              });
+              alert("last path length:" + l + "m");
+              paths.push(newPath);
+            }
+          }
+        );
       }
       google.maps.event.addDomListener(window, 'load', initialize);
     </script>
   </head>
   <body>
-    <div>This is header</div>
+    <div>Klikni na ciarkovy tool v strede vrchu mapy, dvojklik ukoncuje cestu.</div>
     <div id="map-canvas"/>
   </body>
 </html>
