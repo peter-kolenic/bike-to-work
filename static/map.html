@@ -42,7 +42,7 @@
         var paths = [];
         var infowindow = new google.maps.InfoWindow();
         drawingManager.setMap(map);
-        google.maps.event.addListener(drawingManager, 'overlaycomplete', 
+        google.maps.event.addListener(drawingManager, 'overlaycomplete',
           function(event) {
             if(event.type == google.maps.drawing.OverlayType.POLYLINE) {
               var newPath = event.overlay;
