@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"></link>
+    <script type="text/javascript" href="bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" href="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <style type="text/css">
+      #map-canvas { height: 400px; width: 600px; }
+      #footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        /* Set the fixed height of the footer here */
+        height: 40px;
+        background-color: #f5f5f5;
+      }
+    </style>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?libraries=drawing,geometry">
+    </script>
+    <script type="text/javascript">
+      var directionsDisplay;
+      var directionsService = new google.maps.DirectionsService();
+      var map;
+
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(49, 21.23),
+          zoom: 14
+        };
+        map = new google.maps.Map(document.getElementById("map-canvas"),
+            mapOptions);
+
+        directionsDisplay = 
+          new google.maps.DirectionsRenderer({
+            draggable: true
+          });
+        directionsDisplay.setMap(map);
+
+        var drawingManager = new google.maps.drawing.DrawingManager({
+          drawingMode: google.maps.drawing.OverlayType.MARKER,
+          drawingControl: true,
+          drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_CENTER,
+            drawingModes: [
+              google.maps.drawing.OverlayType.MARKER
+            ]
+          },
+          // markerOptions: {
+          //   icon: 'images/beachflag.png'
+          // },
+          circleOptions: {
+            fillColor: '#ffff00',
+            fillOpacity: 1,
+            strokeWeight: 5,
+            clickable: false,
+            editable: true,
+            zIndex: 1
+          }
+        });
+        var points = [];
+        var infowindow = new google.maps.InfoWindow();
+        drawingManager.setMap(map);
+        var drmngr = google.maps.event.addListener(drawingManager, 'overlaycomplete',
+          function(event) {
+            if(event.type == google.maps.drawing.OverlayType.MARKER) {
+              var newPoint = event.overlay;
+              // var l = google.maps.geometry.spherical.computeLength(event.overlay.getPath());
+              newPoint.content = "path #" + points.length; 
+              points.push(newPoint);
+              if (points.length == 2) {
+                drawingManager.setDrawingMode(null);
+                google.maps.event.removeListener(drmngr);
+                showDirection(points[0].getPosition(), points[1].getPosition());
+                google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+                  computeTotalDistance(directionsDisplay.getDirections());
+                });
+              }
+
+            }
+          }
+        );
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+      function showDirection(start, end) {
+        var request = {
+          origin:start,
+          destination:end,
+          travelMode: google.maps.TravelMode.WALKING,
+          provideRouteAlternatives: true
+        };
+        directionsService.route(request, function(result, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(result);
+          }
+        });
+      }
+      function computeTotalDistance(result) {
+        var total = 0;
+        var myroute = result.routes[0];
+        for (var i = 0; i < myroute.legs.length; i++) {
+          total += myroute.legs[i].distance.value;
+        }
+        total = total / 1000.0;
+        document.getElementById('total').innerHTML = total + ' km';
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div>Klikni zaciatok a koniec cesty. Potom mozes posuvat body vnutry cesty. Dlzka cesty:<span id="total">0</span>
+      <div id="map-canvas"></div>
+    </div>
+  </body>
+</html>

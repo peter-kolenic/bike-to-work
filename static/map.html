@@ -28,7 +28,7 @@
         var map = new google.maps.Map(document.getElementById("map-canvas"),
             mapOptions);
         var drawingManager = new google.maps.drawing.DrawingManager({
-          drawingMode: null,
+          drawingMode: google.maps.drawing.OverlayType.POLYLINE,
           drawingControl: true,
           drawingControlOptions: {
             position: google.maps.ControlPosition.TOP_CENTER,
@@ -79,11 +79,5 @@
       <div id="map-canvas"></div>
       <div class="footer">Klikni na ciarkovy tool v strede vrchu mapy, dvojklik ukoncuje cestu.</div>
     </div>
-    <div id="footer">
-      <div class="container">
-        <p class="text-muted">pokusne mapy</p>
-      </div>
-    </div>
-
   </body>
 </html>
