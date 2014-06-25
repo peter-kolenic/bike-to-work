@@ -2,10 +2,19 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"></link>
+    <script type="text/javascript" href="bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" href="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <style type="text/css">
-      html { height: 100% }
-      body { height: 100%; margin: 0; padding: 0 }
       #map-canvas { height: 400px; width: 600px; }
+      #footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        /* Set the fixed height of the footer here */
+        height: 40px;
+        background-color: #f5f5f5;
+      }
     </style>
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?libraries=drawing,geometry">
@@ -64,7 +73,17 @@
     </script>
   </head>
   <body>
-    <div>Klikni na ciarkovy tool v strede vrchu mapy, dvojklik ukoncuje cestu.</div>
-    <div id="map-canvas"/>
+    <div class="container">
+      <div>Vyrabanie cesty klikanim bez afinity bodov a hladania dopravneho spojenia.<br />
+      Klikni na ciarkovy tool v strede vrchu mapy, <strong>dvojklik ukoncuje cestu</strong>.</div>
+      <div id="map-canvas"></div>
+      <div class="footer">Klikni na ciarkovy tool v strede vrchu mapy, dvojklik ukoncuje cestu.</div>
+    </div>
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted">pokusne mapy</p>
+      </div>
+    </div>
+
   </body>
 </html>
